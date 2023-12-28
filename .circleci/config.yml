@@ -15,6 +15,7 @@ jobs:
       - image: vegardit/graalvm-maven:17.0.7
     # Add steps to the job
     # See: https://circleci.com/docs/configuration-reference/#steps
+    resource_class: large
     steps:
       # Checkout the code as the first step.
       - checkout
