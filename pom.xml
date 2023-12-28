@@ -159,7 +159,6 @@
                         <buildArg>-H:+AddAllCharsets</buildArg>
                         <buildArg>-H:TempDirectory=${env.TMPDIR}</buildArg>
                         <buildArg>-march=compatibility</buildArg>
-                        <buildArg>-J-Xmx6G</buildArg>
                         <buildArg>--enable-monitoring=all</buildArg>
                     </buildArgs>
                     <imageName>${executable-name}</imageName>
