@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.5</version>
+        <relativePath/>
+    </parent>
+    <groupId>aero.tav.tams</groupId>
+    <artifactId>tams-exporter</artifactId>
+    <version>${revision}</version>
+    <name>tams-exporter</name>
+    <description>Pod Detail Exporter</description>
+
+    <properties>
+        <revision>0-SNAPSHOT</revision>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <docker-repository>harbor.tav.aero/tams/tams-exporter</docker-repository>
+        <dockerfile-maven-plugin.version>1.4.13</dockerfile-maven-plugin.version>
+        <start-class>aero.tav.tams.exporter.Application</start-class>
+
+        <executable-name>native-executable-app</executable-name>
+        <executable-jar-name>${project.artifactId}.jar</executable-jar-name>
+        <executable-path>target/${executable-name}</executable-path>
+        <executable-jar-path>target/${executable-jar-name}</executable-jar-path>
+
+        <logstash-logback-encoder.version>7.4</logstash-logback-encoder.version>
+        <openshift-client.version>6.9.2</openshift-client.version>
+        <commons-lang3.version>3.13.0</commons-lang3.version>
+        <springdoc-openapi-starter-webmvc-ui.version>2.2.0</springdoc-openapi-starter-webmvc-ui.version>
+        <org.projectlombok.version>1.18.30</org.projectlombok.version>
+        <reflections.version>0.10.2</reflections.version>
+        <snakeyaml.version>2.2</snakeyaml.version>
+
+        <maven-scm-plugin.version>2.0.1</maven-scm-plugin.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>releases</id>
+            <url>http://repository.tav.aero/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>snapshots</id>
+            <url>http://repository.tav.aero/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled/>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>thirdparty</id>
+            <url>http://repository.tav.aero/content/repositories/thirdparty</url>
+        </repository>
+    </repositories>
+
+    <scm>
+        <developerConnection>scm:git:https://bitbucket.tav.aero/scm/TAMS/tams-exporter.git</developerConnection>
+        <url>https://bitbucket.tav.aero/scm/TAMS/tams-exporter.git</url>
+    </scm>
+
+    <dependencies>
+        <!-- Spring Managed -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+        <!-- 3RD Party -->
+        <dependency>
+            <groupId>io.fabric8</groupId>
+            <artifactId>openshift-client</artifactId>
+            <version>${openshift-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${org.projectlombok.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.logstash.logback</groupId>
+            <artifactId>logstash-logback-encoder</artifactId>
+            <version>${logstash-logback-encoder.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${reflections.version}</version>
+        </dependency>
+        <!-- Tracing -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-reporter-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.zipkin.reporter2</groupId>
+            <artifactId>zipkin-sender-kafka</artifactId>
+        </dependency>
+        <!-- TEST -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.graalvm.buildtools</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <configuration>
+                    <buildArgs>
+                        <buildArg>-H:+AddAllCharsets</buildArg>
+                        <buildArg>-H:TempDirectory=${env.TMPDIR}</buildArg>
+                        <buildArg>-march=compatibility</buildArg>
+                        <buildArg>-J-Xmx12G</buildArg>
+                        <buildArg>--enable-monitoring=all</buildArg>
+                    </buildArgs>
+                    <imageName>${executable-name}</imageName>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>tag</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>latest</id>
+                        <phase>none</phase>
+                        <goals>
+                            <goal>tag</goal>
+                            <goal>push</goal>
+                        </goals>
+                        <configuration>
+                            <!--suppress UnresolvedMavenProperty -->
+                            <tag>${TAG_LATEST}</tag>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <tag>${TAG}</tag>
+                    <repository>${docker-repository}</repository>
+                    <buildArgs>
+                        <ARG_EXECUTABLE_FILE>${executable-name}</ARG_EXECUTABLE_FILE>
+                        <ARG_EXECUTABLE_JAR_FILE>${executable-jar-name}</ARG_EXECUTABLE_JAR_FILE>
+                        <ARG_EXECUTABLE_PATH>${executable-path}</ARG_EXECUTABLE_PATH>
+                        <ARG_EXECUTABLE_JAR_PATH>${executable-jar-path}</ARG_EXECUTABLE_JAR_PATH>
+                    </buildArgs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-scm-plugin</artifactId>
+                <version>${maven-scm-plugin.version}</version>
+                <configuration>
+                    <tag>version-${revision}</tag>
+                    <!-- TODO: use custom mvn settings.xml here -->
+                    <!--suppress UnresolvedMavenProperty -->
+                    <username>${BITBUCKET_ACCESS_USR}</username>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <password>${BITBUCKET_ACCESS_PSW}</password>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

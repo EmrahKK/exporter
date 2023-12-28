@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+	<springProperty scope="context" name="spring.application.name" source="spring.application.name" />
+	<springProperty scope="context" name="spring.profiles.active" source="spring.profiles.active" />
+    <springProperty scope="context" name="deployEnv" source="deployEnv"  />
+    <springProperty scope="context" name="instanceId" source="instanceId"  />
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<Pattern>
+				%black(%d{ISO8601}) %highlight(%-5level) [%blue(%t,%X{traceId},%X{spanId})] %yellow(%C{1}): %msg%n%throwable
+			</Pattern>
+		</layout>
+	</appender>
+	<appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+		<destination> ${LOGSTASH_URL:-elastic.tams.tav.aero:5000} </destination>
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<mdc />
+				<context />
+				<version />
+				<logLevel />
+				<loggerName />
+				<pattern>
+					<pattern>
+						{
+						"appName": "${spring.application.name}",
+						"trace": "%X{traceId}",
+                        "span": "%X{spanId}",
+						"env": "${spring.profiles.active}",
+                        "deployEnv":"${deployEnv}",
+                        "instanceId":"${instanceId}"
+						}
+					</pattern>
+				</pattern>
+				<threadName />
+				<message />
+				<logstashMarkers />
+				<arguments />
+				<stackTrace />
+			</providers>
+		</encoder>
+	</appender>
+	<appender name="JSON_APPENDER" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+			<providers>
+				<mdc/>
+				<context/>
+				<version/>
+				<logLevel/>
+				<loggerName/>
+				<timestamp>
+					<fieldName>log_timestamp</fieldName>
+					<pattern>[ISO_OFFSET_DATETIME]</pattern>
+				</timestamp>
+				<pattern>
+					<pattern>
+						{
+						"appName": "${spring.application.name}",
+						"trace": "%X{traceId}",
+						"span": "%X{spanId}",
+						"env": "${spring.profiles.active}"
+						}
+					</pattern>
+				</pattern>
+				<threadName/>
+				<message/>
+				<logstashMarkers/>
+				<arguments/>
+				<stackTrace/>
+			</providers>
+		</encoder>
+	</appender>
+
+	<springProfile name="local">
+		<logger name="aero.tav.tams" level="DEBUG"/>
+	</springProfile>
+
+	<!-- In deployed environment, if JSON profile enabled -->
+	<springProfile name="(dockerdev | dockertest | uat) &amp; json">
+		<root level="INFO">
+			<appender-ref ref="JSON_APPENDER" />
+		</root>
+	</springProfile>
+
+	<!-- In deployed environment, if old style logging enabled -->
+	<springProfile name="(dockerdev | dockertest | uat) &amp; !json">
+		<root level="INFO">
+			<appender-ref ref="CONSOLE" />
+			<appender-ref ref="STASH" />
+		</root>
+	</springProfile>
+
+	<!-- Development environments -->
+	<springProfile name="!dockerdev &amp; !dockertest &amp; !uat">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE" />
+        </root>
+    </springProfile>
+
+</configuration>

@@ -1,0 +1,38 @@
+management:
+  server:
+    port: 9099
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+    propagation:
+      type:
+        - W3C
+        - B3
+        - B3_MULTI
+springdoc:
+  enable-native-support: true
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    enabled: true
+openShift:
+  url: https://localhost
+  token: 'bXktc2VjcmV0LXRva2Vu'
+  name-space: 'local-test-space'
+  usingCertFile: true
+  certFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+  tokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+spring:
+  application:
+    name: tams-exporter
+  kafka:
+    zipkin:
+      topic: "zipkin"
+      key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer

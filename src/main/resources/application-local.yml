@@ -1,0 +1,29 @@
+openShift:
+  nameSpace: tams-dev
+  url: https://api.tavopenshift.tav.aero:6443
+  token: "ZXlKaGJHY2lPaUpTVXpJMU5pSXNJbXRwWkNJNkltcE1NSFZXY1ZkeU1WZzVRbk0zVUdOcE0yOUpRVzFEUTNoSGIzUTRORlZ5WXpGek5uZHNkMjExTVVFaWZRLmV5SnBjM01pT2lKcmRXSmxjbTVsZEdWekwzTmxjblpwWTJWaFkyTnZkVzUwSWl3aWEzVmlaWEp1WlhSbGN5NXBieTl6WlhKMmFXTmxZV05qYjNWdWRDOXVZVzFsYzNCaFkyVWlPaUprWldaaGRXeDBJaXdpYTNWaVpYSnVaWFJsY3k1cGJ5OXpaWEoyYVdObFlXTmpiM1Z1ZEM5elpXTnlaWFF1Ym1GdFpTSTZJbXBsYm10cGJuTXRkRzlyWlc0dFpIRTNNbkVpTENKcmRXSmxjbTVsZEdWekxtbHZMM05sY25acFkyVmhZMk52ZFc1MEwzTmxjblpwWTJVdFlXTmpiM1Z1ZEM1dVlXMWxJam9pYW1WdWEybHVjeUlzSW10MVltVnlibVYwWlhNdWFXOHZjMlZ5ZG1salpXRmpZMjkxYm5RdmMyVnlkbWxqWlMxaFkyTnZkVzUwTG5WcFpDSTZJamd5TVRSa016azNMVFpqTldVdE5HSmxZaTA1WlRJMkxUbGpPVFprTVRjek1UWXlZeUlzSW5OMVlpSTZJbk41YzNSbGJUcHpaWEoyYVdObFlXTmpiM1Z1ZERwa1pXWmhkV3gwT21wbGJtdHBibk1pZlEualU3X3g0WUF1Tzlfckh3SmVtTFV4T0FVY0dYUm84dW9nM2V0ekRwWTBweWE2a1pfZlhNZldvamFSdnVyNGExcms2ZGtvQ0JWUlVLQ2VZcmZZSm84YlNmTE1LOTMzNnNWVUlVdDhaUVFwdjN0bFJlYU95Q2s4UWVoaUVXS1RoMVFZVExBTXA5YldDRjlPTG5VN0RGNFUtdUhxaFQxbW54bGdld21wcmZPNTJxeWQ2OUw4S2NfbjJSOWJWd1lzRzd3ZWdXRy1uWjRiUzROU2NOUWkxZ0g1TUY2WXRXRy1ZMmQ2QXA5bG9jaW9tZnZXTVhBVW5uZ0tfTWRkbzJxTGJCVmE2RHRpVDRGVlZVUXBIZVpaTWhjZzg4eTB0WFg3cVl2OUItaWhqRXJ2ME5IRXVYSzZBVnBqNnYzUjl6VW9QdkRObXQ4NmVQS3cxZXRvYmhrWFUxdXhiZXN6eTk0QWdXc25ZWkMwcno0QzFYTjNzQmNaRVdoaGJWVUVkcThvYy1uOFJjTlpUckprWnZZRVhoMzRYZ1VkR1FzOWRJSU1EOHIzeGFYbmpHcDhVbi1MX0N6bDNpRDlHS1owUHlOQVRrX3EzTUI5cDZFb09EcXNYU1J3aHgwOU93SUZYYWd4Q0pETG5tTjVhVGNsSEhlY0dULTlWbjc4aUFrWHJHLUZLN3ZJVkJsV2dPdHpoTGRXWWxKN05HZ0pZTUVqTFB3QWdweC1hNzZqS1Y2V25felZMLUNra1RQdG5TVkkyWFF1S0RUZkJUTnRHbV9UM25TcmpRX1BLeHB5U2RJdkhxQjE4NDBuR1NlbmdOTllNRlR5WFBxR1lQcnljN1BUSTFvbFpHQUhLWjZ6Z1V4Y3k3ZlEzRW5xblVuX2g4TjNmMVlnR3hNN2dFN3B5dDlHQTQ="
+  usingCertFile: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - '*'
+      base-path: '/app-healthcheck/actuator'
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+spring:
+  application:
+    name: tams-exporter
+  kafka:
+    bootstrap-servers:
+      - 10.2.53.30:30010
+#      - localhost:9092
+#      - localhost:9093
+#      - localhost:9094
+    zipkin:
+      topic: "zipkin"
+      key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
