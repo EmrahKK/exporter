@@ -4,6 +4,7 @@ FROM container-registry.oracle.com/graalvm/jdk:17
 #Label it for groupping
 LABEL aero.tav.project="tams"
 
+
 #Expose necessary ports
 EXPOSE 8080
 
